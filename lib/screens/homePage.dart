@@ -1,61 +1,155 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
+import 'package:stock_exchange_data_via_api/utils/myRoutes.dart';
+
+class StockData {
+  late final String c;
+  late final String t;
+  late final String o;
+  late final String h;
+  late final String l;
+  late final String n;
+  late final String v;
+  late final String vw;
+
+  StockData(this.c, this.t, this.o, this.h, this.l, this.n, this.v, this.vw);
+}
+
 
 class HomePage extends StatefulWidget {
-  HomePage({Key? key}) : super(key: key);
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
-
-  var _range;
-  var _equity;
-  var _apikey;
-  var _fDate;
-  var _fMonth;
-  var _fYear;
-  var _tDate;
-  var _tMonth;
-  var _tYear;
 }
 
 class _HomePageState extends State<HomePage> {
-  @override
-  void generateData(int range, String equity, int fYear, int fMonth, int fDate,
-      int tYear, int tMonth, int tDate) async {
-    Response stockData = await get(
-      Uri.parse(
-          'https://api.polygon.io/v2/aggs/ticker/$equity/$range/1/minute/$fYear-$fMonth-$fDate/$tYear-$tMonth-$tDate?apiKey=zMcpUX4RjUks2ncqOoXdBHXUck_WFeGK'),
-    );
-    for (int i = 0; i < range; i++) {
-      var mainData = stockData.body;
-      var decodedData = jsonDecode(mainData)["results"][i];
-      var epochTime = decodedData['t'];
-      var date = DateTime.fromMillisecondsSinceEpoch(epochTime);
-      var openRate = decodedData['o'];
-      var closingRate = decodedData['c'];
-      var highRate = decodedData['h'];
-      var lowRate = decodedData['l'];
-      var transactNumber = decodedData['n'];
-      var volume = decodedData['v'];
-    }
-  }
+  var _equity;
+  var _fromDate;
+  var _toDate;
 
-  // Text mainData(){
-  //   return Text(res)
-  // }
+  final _validationKey = GlobalKey<FormState>();
+
+  Future<List<StockData>> _getData(String equity, String fDate, String tDate) async {
+
+    var data = await get(Uri.parse(
+        'https://api.polygon.io/v2/aggs/ticker/$equity/range/1/minute/$fDate/$tDate?apiKey=zMcpUX4RjUks2ncqOoXdBHXUck_WFeGK'),
+    );
+
+    var mainData = data.body;
+    var decodedData = jsonDecode(mainData);
+
+    List<StockData> stocks = [];
+
+    for(var u in decodedData["results"]){
+      StockData stock = StockData(u["c"],u["o"],u["h"],u["l"],u["n"],u["t"],u["v"],u["vw"]);
+      stocks.add(stock);
+    }
+
+    return stocks;
+
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("StockRates API Data App"),
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         child: Column(
-          children: const [
-            Text("Lorem Ipsum"),
-            // Text(data)
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Form(
+              key: _validationKey,
+              child: Column(
+                children: [
+                  TextFormField(
+                    validator: (_equity) {
+                      if (_equity!.isEmpty) {
+                        return "Please enter the name of EQUITY!";
+                      }
+                      return null;
+                    },
+                    decoration: const InputDecoration(
+                        labelText: 'Equity',
+                        hintText: 'for ex : AAPL or AMZN...'),
+                    onChanged: (value) {
+                      setState(() {
+                        _equity = value;
+                      });
+                    },
+                  ),
+                  TextFormField(
+                    validator: (frmDate) {
+                      if (frmDate!.isEmpty) {
+                        return "Please enter the date!";
+                      }
+                      return null;
+                    },
+                    decoration: const InputDecoration(
+                        labelText: 'From Date',
+                        hintText: 'format : YYYY-MM-DD , for ex : 2020-02-22'),
+                    onChanged: (value) {
+                      setState(() {
+                        _fromDate = value;
+                      });
+                    },
+                  ),
+                  TextFormField(
+                    validator: (toDate) {
+                      if (toDate!.isEmpty) {
+                        return "Please enter date!";
+                      }
+                      return null;
+                    },
+                    decoration: const InputDecoration(
+                        labelText: 'To Date',
+                        hintText: 'format : YYYY-MM-DD , for ex : 2021-04-25'),
+                    onChanged: (value) {
+                      setState(() {
+                        _toDate = value.toString();
+                      });
+                    },
+                  )
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 20.0,
+            ),
+            Container(
+              width: 300.0,
+              height: 40.0,
+              child: ElevatedButton(
+                autofocus: true,
+                onPressed: () {
+                  if (_validationKey.currentState!.validate()) {
+                    _getData(_equity, _fromDate, _toDate);
+                    Navigator.pushNamed(context, Routes.dataScreen);
+                  }
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: const [
+                    Text(
+                      "VIEW RESULT",
+                    ),
+                    SizedBox(
+                      width: 5.0,
+                    ),
+                    Icon(Icons.arrow_forward),
+                  ],
+                ),
+                style: ElevatedButton.styleFrom(
+                    primary: Colors.blueGrey,
+                    minimumSize: const Size(60.0, 40.0),
+                    elevation: 8.0,
+                    animationDuration: const Duration(seconds: 1)),
+              ),
+            ),
           ],
         ),
       ),
