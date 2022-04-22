@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
-import 'package:stock_exchange_data_via_api/utils/myRoutes.dart';
 
 class StockData {
   late final String c;
@@ -16,7 +15,6 @@ class StockData {
   StockData(this.c, this.t, this.o, this.h, this.l, this.n, this.v, this.vw);
 }
 
-
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -28,27 +26,30 @@ class _HomePageState extends State<HomePage> {
   var _equity;
   var _fromDate;
   var _toDate;
+  var rawdata = "";
 
   final _validationKey = GlobalKey<FormState>();
 
-  Future<List<StockData>> _getData(String equity, String fDate, String tDate) async {
-
-    var data = await get(Uri.parse(
-        'https://api.polygon.io/v2/aggs/ticker/$equity/range/1/minute/$fDate/$tDate?apiKey=zMcpUX4RjUks2ncqOoXdBHXUck_WFeGK'),
+  Future<List<StockData>> _getData(
+      String equity, String fDate, String tDate) async {
+    var data = await get(
+      Uri.parse(
+          'https://api.polygon.io/v2/aggs/ticker/$equity/range/1/minute/$fDate/$tDate?apiKey=zMcpUX4RjUks2ncqOoXdBHXUck_WFeGK'),
     );
 
     var mainData = data.body;
+    rawdata = mainData;
     var decodedData = jsonDecode(mainData);
 
     List<StockData> stocks = [];
 
-    for(var u in decodedData["results"]){
-      StockData stock = StockData(u["c"],u["o"],u["h"],u["l"],u["n"],u["t"],u["v"],u["vw"]);
+    for (var u in decodedData["results"]) {
+      StockData stock = StockData(
+          u["c"], u["o"], u["h"], u["l"], u["n"], u["t"], u["v"], u["vw"]);
       stocks.add(stock);
     }
-
+    //print(stocks.length.toString());
     return stocks;
-
   }
 
   @override
@@ -75,7 +76,7 @@ class _HomePageState extends State<HomePage> {
                     },
                     decoration: const InputDecoration(
                         labelText: 'Equity',
-                        hintText: 'for ex : AAPL or AMZN...'),
+                        hintText: 'for ex : AAPL,AMZN,MSFT,GOOG,GOOGL,etc...'),
                     onChanged: (value) {
                       setState(() {
                         _equity = value;
@@ -127,8 +128,10 @@ class _HomePageState extends State<HomePage> {
                 autofocus: true,
                 onPressed: () {
                   if (_validationKey.currentState!.validate()) {
-                    _getData(_equity, _fromDate, _toDate);
-                    Navigator.pushNamed(context, Routes.dataScreen);
+                    setState(() {
+                      _getData(_equity, _fromDate, _toDate);
+                    });
+                    // Navigator.pushNamed(context, Routes.dataScreen);
                   }
                 },
                 child: Row(
@@ -148,6 +151,35 @@ class _HomePageState extends State<HomePage> {
                     minimumSize: const Size(60.0, 40.0),
                     elevation: 8.0,
                     animationDuration: const Duration(seconds: 1)),
+              ),
+            ),
+            const SizedBox(
+              height: 20.0,
+            ),
+            // Center(
+            //   child: Text("Raw Data (will show below after clicking VIEW RESULT) : \n " + rawdata),
+            // )
+            Container(
+              child: FutureBuilder(
+                future: _getData(_equity, _fromDate, _toDate),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.data == null) {
+                    return Container(
+                      child: const Center(
+                        child: Text("Loading ..."),
+                      ),
+                    );
+                  } else {
+                    return ListView.builder(
+                        itemCount: snapshot.data.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return ListTile(
+                            title: Text(_equity),
+                            // subtitle:,
+                          );
+                        });
+                  }
+                },
               ),
             ),
           ],
