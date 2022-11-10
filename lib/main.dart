@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'screens/homePage.dart';
 import 'screens/data.dart';
-import 'package:stock_exchange_data_via_api/utils/myRoutes.dart';
 
 void main() {
   runApp(const MainApp());
@@ -13,12 +12,19 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      // theme: ThemeData(
+      //   brightness: Brightness.light,
+      //   primaryColor: Colors.black,
+      //   colorScheme: ColorScheme.fromSwatch().copyWith(
+      //     secondary: Colors.black,
+      //   ),
+      //   splashColor: Colors.black,
+      // ),
       debugShowCheckedModeBanner: false,
       routes: {
-        '/' : (context) => const HomePage(),
-        '/data' : (context) => const StockPage(),
+        '/': (context) => const HomePage(),
+        '/data': (context) => const StockPage(),
       },
     );
   }
 }
-
