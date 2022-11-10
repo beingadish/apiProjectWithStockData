@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'screens/homePage.dart';
 import 'screens/data.dart';
 
@@ -11,6 +12,18 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    SystemChrome.setPreferredOrientations(
+      [
+        DeviceOrientation.portraitUp,
+      ],
+    );
+
+    SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.manual,
+      overlays: [SystemUiOverlay.bottom, SystemUiOverlay.top],
+    );
+
     return MaterialApp(
       // theme: ThemeData(
       //   brightness: Brightness.light,

@@ -25,7 +25,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     _fromDate.text = "";
-    _toDate.text = ""; //set the initial value of text field
+    _toDate.text = "";
     super.initState();
     initializeDateFormatting();
   }
@@ -63,9 +63,11 @@ class _HomePageState extends State<HomePage> {
                   },
                 ),
                 TextButton(
-                  child: const Text('YES',
-                      style: TextStyle(
-                          color: Colors.black, fontWeight: FontWeight.bold)),
+                  child: const Text(
+                    'YES',
+                    style: TextStyle(
+                        color: Colors.black, fontWeight: FontWeight.bold),
+                  ),
                   onPressed: () {
                     SystemNavigator.pop();
                   },
