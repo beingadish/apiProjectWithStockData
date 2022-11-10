@@ -185,7 +185,6 @@ class _HomePageState extends State<HomePage> {
 
                           String formattedDate =
                               DateFormat('yyyy-MM-dd').format(pickedDate);
-                          fDate = formattedDate;
 
                           if (kDebugMode) {
                             print("Formatted Date : $formattedDate");
@@ -193,6 +192,7 @@ class _HomePageState extends State<HomePage> {
 
                           setState(
                             () {
+                              fDate = formattedDate;
                               _fromDate.text = fDate!;
                             },
                           );
@@ -271,15 +271,13 @@ class _HomePageState extends State<HomePage> {
 
                           String formattedDate =
                               DateFormat('yyyy-MM-dd').format(pickedDate);
-
-                          tDate = formattedDate;
-
                           if (kDebugMode) {
                             print(formattedDate);
                           }
 
                           setState(
                             () {
+                              tDate = formattedDate;
                               _toDate.text = tDate!;
                             },
                           );

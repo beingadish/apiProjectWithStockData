@@ -11,9 +11,6 @@ class StockPage extends StatefulWidget {
   State<StockPage> createState() => _StockPageState();
 }
 
-
-
-
 // String readTimestamp(int timestamp) {
 //   var now = DateTime.now();
 //   var format = DateFormat('HH:mm a');
@@ -43,19 +40,7 @@ class StockPage extends StatefulWidget {
 //   return time;
 // }
 
-
-
-
 class _StockPageState extends State<StockPage> {
-
-  late Future<StockData?> fetchData;
-
-  @override
-  void initState() {
-    super.initState();
-    fetchData = getData();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,28 +52,9 @@ class _StockPageState extends State<StockPage> {
         centerTitle: true,
       ),
       body: FutureBuilder<StockData?>(
-        future: fetchData,
+        future: getData(),
         builder: ((context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-
-            // return ListView.builder(
-            //   padding: const EdgeInsets.symmetric(
-            //     horizontal: 15.0,
-            //   ),
-            //   itemCount: snapshot.data!.resultsCount,
-            //   itemBuilder: (context, index) {
-            //     return Card(
-            //       child: ListTile(
-            //         title: Text(
-            //           DateTime.fromMillisecondsSinceEpoch(
-            //             snapshot.data!.results![index].t!.toInt(),
-            //           ).toString(),
-            //         ),
-            //       ),
-            //     );
-            //   },
-            // );
-
             return const Center(
               child: CircularProgressIndicator(
                 color: Colors.black,
@@ -96,17 +62,6 @@ class _StockPageState extends State<StockPage> {
               ),
             );
           } else if (snapshot.hasData) {
-
-            // return const ScaffoldMessenger(
-            //   child: Padding(
-            //     padding: EdgeInsets.only(bottom: 8.0),
-            //     child: Text(
-            //       "Oops !! Try again.",
-            //       style: TextStyle(fontSize: 18),
-            //     ),
-            //   ),
-            // );
-
             return ListView.builder(
               padding: const EdgeInsets.symmetric(
                 horizontal: 15.0,
@@ -117,8 +72,11 @@ class _StockPageState extends State<StockPage> {
                   child: ListTile(
                     title: Text(
                       DateTime.fromMillisecondsSinceEpoch(
-                        snapshot.data!.results![index].t!.toInt(),
+                        snapshot.data!.results![index].t.toInt(),
                       ).toString(),
+                    ),
+                    subtitle: Text(
+                      snapshot.data!.results![index].h.toString(),
                     ),
                   ),
                 );
@@ -126,13 +84,6 @@ class _StockPageState extends State<StockPage> {
             );
           } else {
             log(snapshot.data.toString());
-            // return const Center(
-            //   child: CircularProgressIndicator(
-            //     color: Colors.black,
-            //     backgroundColor: Colors.white,
-            //   ),
-            // );
-
             return const ScaffoldMessenger(
               child: Padding(
                 padding: EdgeInsets.only(bottom: 8.0),

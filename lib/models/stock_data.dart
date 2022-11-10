@@ -1,180 +1,98 @@
+// To parse this JSON data, do
+//
+//     final stockData = stockDataFromJson(jsonString);
+
+import 'dart:convert';
+
+StockData stockDataFromJson(String str) => StockData.fromJson(json.decode(str));
+
+String stockDataToJson(StockData data) => json.encode(data.toJson());
+
 class StockData {
-  String? _ticker;
-  int? _queryCount;
-  int? _resultsCount;
-  bool? _adjusted;
-  List<Results>? _results;
-  String? _status;
-  String? _requestId;
-  int? _count;
+  StockData({
+    required this.ticker,
+    required this.queryCount,
+    required this.resultsCount,
+    required this.adjusted,
+    required this.results,
+    required this.status,
+    required this.requestId,
+    required this.count,
+  });
 
-  StockData(
-      {String? ticker,
-        int? queryCount,
-        int? resultsCount,
-        bool? adjusted,
-        List<Results>? results,
-        String? status,
-        String? requestId,
-        int? count}) {
-    if (ticker != null) {
-      _ticker = ticker;
-    }
-    if (queryCount != null) {
-      _queryCount = queryCount;
-    }
-    if (resultsCount != null) {
-      _resultsCount = resultsCount;
-    }
-    if (adjusted != null) {
-      _adjusted = adjusted;
-    }
-    if (results != null) {
-      _results = results;
-    }
-    if (status != null) {
-      _status = status;
-    }
-    if (requestId != null) {
-      this._requestId = requestId;
-    }
-    if (count != null) {
-      this._count = count;
-    }
-  }
+  final String ticker;
+  final int queryCount;
+  final int resultsCount;
+  final bool adjusted;
+  final List<Result>? results;
+  final String status;
+  final String requestId;
+  final int count;
 
-  String? get ticker => _ticker;
-  set ticker(String? ticker) => _ticker = ticker;
-  int? get queryCount => _queryCount;
-  set queryCount(int? queryCount) => _queryCount = queryCount;
-  int? get resultsCount => _resultsCount;
-  set resultsCount(int? resultsCount) => _resultsCount = resultsCount;
-  bool? get adjusted => _adjusted;
-  set adjusted(bool? adjusted) => _adjusted = adjusted;
-  List<Results>? get results => _results;
-  set results(List<Results>? results) => _results = results;
-  String? get status => _status;
-  set status(String? status) => _status = status;
-  String? get requestId => _requestId;
-  set requestId(String? requestId) => _requestId = requestId;
-  int? get count => _count;
-  set count(int? count) => _count = count;
+  factory StockData.fromJson(Map<String, dynamic> json) => StockData(
+    ticker: json["ticker"] == null ? null : json["ticker"],
+    queryCount: json["queryCount"] == null ? null : json["queryCount"],
+    resultsCount:
+    json["resultsCount"] == null ? null : json["resultsCount"],
+    adjusted: json["adjusted"] == null ? null : json["adjusted"],
+    results: json["results"] == null
+        ? null
+        : List<Result>.from(json["results"].map((x) => Result.fromJson(x))),
+    status: json["status"] == null ? null : json["status"],
+    requestId: json["request_id"] == null ? null : json["request_id"],
+    count: json["count"] == null ? null : json["count"],
+  );
 
-  StockData.fromJson(Map<String, dynamic> json) {
-    _ticker = json['ticker'];
-    _queryCount = json['queryCount'];
-    _resultsCount = json['resultsCount'];
-    _adjusted = json['adjusted'];
-    if (json['results'] != null) {
-      _results = <Results>[];
-      json['results'].forEach((v) {
-        _results!.add(new Results.fromJson(v));
-      });
-    }
-    _status = json['status'];
-    _requestId = json['request_id'];
-    _count = json['count'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['ticker'] = this._ticker;
-    data['queryCount'] = this._queryCount;
-    data['resultsCount'] = this._resultsCount;
-    data['adjusted'] = this._adjusted;
-    if (this._results != null) {
-      data['results'] = this._results!.map((v) => v.toJson()).toList();
-    }
-    data['status'] = this._status;
-    data['request_id'] = this._requestId;
-    data['count'] = this._count;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+    "ticker": ticker == null ? null : ticker,
+    "queryCount": queryCount == null ? null : queryCount,
+    "resultsCount": resultsCount == null ? null : resultsCount,
+    "adjusted": adjusted == null ? null : adjusted,
+    "results": results == null
+        ? null
+        : List<dynamic>.from(results!.map((x) => x.toJson())),
+    "status": status == null ? null : status,
+    "request_id": requestId == null ? null : requestId,
+    "count": count == null ? null : count,
+  };
 }
 
-class Results {
-  double? _v;
-  double? _vw;
-  double? _o;
-  double? _c;
-  double? _h;
-  double? _l;
-  int? _t;
-  int? _n;
+class Result {
+  Result({
+    required this.vw,
+    required this.o,
+    required this.c,
+    required this.h,
+    required this.l,
+    required this.t,
+    required this.n,
+  });
 
-  Results(
-      {double? v,
-        double? vw,
-        double? o,
-        double? c,
-        double? h,
-        double? l,
-        int? t,
-        int? n}) {
-    if (v != null) {
-      this._v = v;
-    }
-    if (vw != null) {
-      this._vw = vw;
-    }
-    if (o != null) {
-      this._o = o;
-    }
-    if (c != null) {
-      this._c = c;
-    }
-    if (h != null) {
-      this._h = h;
-    }
-    if (l != null) {
-      this._l = l;
-    }
-    if (t != null) {
-      this._t = t;
-    }
-    if (n != null) {
-      this._n = n;
-    }
-  }
+  final double vw;
+  final double o;
+  final double c;
+  final double h;
+  final double l;
+  final int t;
+  final int n;
 
-  double? get v => _v;
-  set v(double? v) => _v = v;
-  double? get vw => _vw;
-  set vw(double? vw) => _vw = vw;
-  double? get o => _o;
-  set o(double? o) => _o = o;
-  double? get c => _c;
-  set c(double? c) => _c = c;
-  double? get h => _h;
-  set h(double? h) => _h = h;
-  double? get l => _l;
-  set l(double? l) => _l = l;
-  int? get t => _t;
-  set t(int? t) => _t = t;
-  int? get n => _n;
-  set n(int? n) => _n = n;
+  factory Result.fromJson(Map<String, dynamic> json) => Result(
+    vw: json["vw"] == null ? null : json["vw"].toDouble(),
+    o: json["o"] == null ? null : json["o"].toDouble(),
+    c: json["c"] == null ? null : json["c"].toDouble(),
+    h: json["h"] == null ? null : json["h"].toDouble(),
+    l: json["l"] == null ? null : json["l"].toDouble(),
+    t: json["t"] ?? null,
+    n: json["n"],
+  );
 
-  Results.fromJson(Map<String, dynamic> json) {
-    _v = json['v'];
-    _vw = json['vw'];
-    _o = json['o'];
-    _c = json['c'];
-    _h = json['h'];
-    _l = json['l'];
-    _t = json['t'];
-    _n = json['n'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['v'] = _v;
-    data['vw'] = _vw;
-    data['o'] = _o;
-    data['c'] = _c;
-    data['h'] = _h;
-    data['l'] = _l;
-    data['t'] = _t;
-    data['n'] = _n;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+    "vw": vw,
+    "o": o,
+    "c": c,
+    "h": h,
+    "l": l,
+    "t": t,
+    "n": n,
+  };
 }
