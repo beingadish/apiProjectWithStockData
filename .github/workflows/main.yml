@@ -29,8 +29,8 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           artifacts: "build/app/outputs/apk/debug/*"
-          tag: v1.0.${{ github.run_number }}
-          token: ${{ secrets.APP_RELEASE_TOKEN }}
+          tag: v1.0.${{ github.run_number-1 }}
+          token: ${{ secrets.STOCK_APP_TOKEN }}
 
 
 # GITHUB ACTIONS CI/CD CODE
